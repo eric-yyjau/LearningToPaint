@@ -41,6 +41,23 @@ def train(agent, env, evaluate, writer):
             observation = env.reset()
             agent.reset(observation, noise_factor)    
         action = agent.select_action(observation, noise_factor=noise_factor)
+        def limit_actions(action, no_rbg=False, no_curve=False, no_transpar=False, same_thick=False):
+            x = action.reshape(-1, 10 + 3)
+            if no_rbg:
+                x[:,-3:] = 1
+            if no_curve:
+                x[:,2:4] = 0
+            if no_transpar:
+                x[:,7] = 1
+                x[:,9] = 1
+            if same_thick:
+                x[:,6] = x[:,8]
+
+            x = x.reshape(-1, (10 + 3)*5)
+            return x
+            pass
+        action = limit_actions(action, no_rbg=True, no_curve=True, no_transpar=True, same_thick=True)
+
         observation, reward, done, _ = env.step(action)
         agent.observe(reward, observation, done, step)
         if (episode_steps >= max_step and max_step):
