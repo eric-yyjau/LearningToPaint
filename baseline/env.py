@@ -35,7 +35,7 @@ class Paint:
     def load_data(self):
         # CelebA
         path = './data/dump_cubi_test/'
-        num_img = 10
+        num_img = 100
         img_type = '.png'
         global train_num, test_num
         for i in range(num_img):
