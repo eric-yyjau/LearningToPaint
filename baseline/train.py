@@ -35,6 +35,7 @@ def train(agent, env, evaluate, writer):
     observation = None
     noise_factor = args.noise_factor
     pbar = tqdm(total = train_times+1)
+    limit_act = True; print(f"limit actions: {limit_act}")
     while step <= train_times:
         # print(f"step: {step}")
         step += 1
@@ -60,7 +61,8 @@ def train(agent, env, evaluate, writer):
             x = x.reshape(-1, (10 + 3)*5)
             return x
             pass
-        action = limit_actions(action, no_rbg=True, no_curve=True, no_transpar=True, same_thick=True)
+        if limit_act: 
+            action = limit_actions(action, no_rbg=True, no_curve=True, no_transpar=True, same_thick=True)
 
         observation, reward, done, _ = env.step(action)
         agent.observe(reward, observation, done, step)
