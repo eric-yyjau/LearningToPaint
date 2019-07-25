@@ -9,13 +9,14 @@ from utils.tensorboard import TensorBoard
 import time
 
 from tqdm import tqdm
+from tensorboardX import SummaryWriter
+# exp = os.path.abspath('.').split('/')[-1]
+# writer = TensorBoard('../train_log/{}'.format(exp))
 
-exp = os.path.abspath('.').split('/')[-1]
-writer = TensorBoard('../train_log/{}'.format(exp))
-os.system('ln -sf ../train_log/{} ./log'.format(exp))
-os.system('mkdir ./model')
+# os.system('ln -sf ../train_log/{} ./log'.format(exp))
+# os.system('mkdir ./model')
 
-def train(agent, env, evaluate):
+def train(agent, env, evaluate, writer):
     train_times = args.train_times
     env_batch = args.env_batch
     validate_interval = args.validate_interval
@@ -100,9 +101,15 @@ if __name__ == "__main__":
     parser.add_argument('--output', default='./model', type=str, help='Resuming model path for testing')
     parser.add_argument('--debug', dest='debug', action='store_true', help='print some info')
     parser.add_argument('--seed', default=1234, type=int, help='random seed')
-    
+    parser.add_argument('--identifier', default='test', type=str, help='experiment identifier')
+
     args = parser.parse_args()    
     args.output = get_output_folder(args.output, "Paint")
+
+    from utils.utils import getWriterPath
+    writer = SummaryWriter(getWriterPath(task='train',
+                                              exper_name=args.identifier, date=True))
+
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
@@ -117,4 +124,4 @@ if __name__ == "__main__":
                  writer, args.resume, args.output)
     evaluate = Evaluator(args, writer)
     print('observation_space', fenv.observation_space, 'action_space', fenv.action_space)
-    train(agent, fenv, evaluate)
+    train(agent, fenv, evaluate, writer)

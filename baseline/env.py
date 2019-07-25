@@ -34,13 +34,18 @@ class Paint:
         
     def load_data(self):
         # CelebA
+        path = './data/dump_cubi_test/'
+        num_img = 10
+        img_type = '.png'
         global train_num, test_num
-        for i in range(200000):
+        for i in range(num_img):
             img_id = '%06d' % (i + 1)
             try:
-                img = cv2.imread('./data/img_align_celeba/' + img_id + '.jpg', cv2.IMREAD_UNCHANGED)
+                img = cv2.imread(path + img_id + img_type, cv2.IMREAD_UNCHANGED)
+                if img.ndim == 2:
+                    img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
                 img = cv2.resize(img, (width, width))
-                if i > 2000:                
+                if i > num_img/10:
                     train_num += 1
                     img_train.append(img)
                 else:
