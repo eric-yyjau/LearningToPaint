@@ -8,6 +8,8 @@ from utils.util import *
 from utils.tensorboard import TensorBoard
 import time
 
+from tqdm import tqdm
+
 exp = os.path.abspath('.').split('/')[-1]
 writer = TensorBoard('../train_log/{}'.format(exp))
 os.system('ln -sf ../train_log/{} ./log'.format(exp))
@@ -27,8 +29,11 @@ def train(agent, env, evaluate):
     tot_reward = 0.
     observation = None
     noise_factor = args.noise_factor
+    pbar = tqdm(total = train_times+1)
     while step <= train_times:
+        # print(f"step: {step}")
         step += 1
+        pbar.update(1)
         episode_steps += 1
         # reset if it is the start of episode
         if observation is None:
@@ -73,6 +78,7 @@ def train(agent, env, evaluate):
             observation = None
             episode_steps = 0
             episode += 1
+    pbar.close()
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Learning to Paint')
