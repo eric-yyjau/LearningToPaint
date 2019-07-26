@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_times', default=2000000, type=int, help='total traintimes')
     parser.add_argument('--episode_train_times', default=10, type=int, help='train times for each episode')    
     parser.add_argument('--resume', default=None, type=str, help='Resuming model path for testing')
-    parser.add_argument('--output', default='./model', type=str, help='Resuming model path for testing')
+    parser.add_argument('--output', default='./model', type=str, help='output model path for testing')
     parser.add_argument('--debug', dest='debug', action='store_true', help='print some info')
     parser.add_argument('--limit_act', default=False, dest='limit_act', action='store_true', help='limit action space')
     parser.add_argument('--seed', default=1234, type=int, help='random seed')
@@ -129,7 +129,8 @@ if __name__ == "__main__":
     parser.add_argument('--data', default='./data/dump_cubi_test/', type=str, help='dataset path')
 
     args = parser.parse_args()    
-    args.output = get_output_folder(args.output, "Paint")
+    args.output = get_output_folder(args.output, args.identifier)
+    
 
     from utils.utils import getWriterPath
     writer = SummaryWriter(getWriterPath(task='train',
