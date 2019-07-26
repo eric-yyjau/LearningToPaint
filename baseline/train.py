@@ -70,7 +70,7 @@ def train(agent, env, evaluate, writer):
             if step > args.warmup:
                 # [optional] evaluate
                 if episode > 0 and validate_interval > 0 and episode % validate_interval == 0:
-                    reward, dist = evaluate(env, agent.select_action, step=step, debug=debug)
+                    reward, dist = evaluate(env, agent.select_action, train_step=step, debug=debug)
                     if debug: prRed('Step_{:07d}: mean_reward:{:.3f} mean_dist:{:.3f} var_dist:{:.3f}'.format(step - 1, np.mean(reward), np.mean(dist), np.var(dist)))
                     writer.add_scalar('validate/mean_reward', np.mean(reward), step)
                     writer.add_scalar('validate/mean_dist', np.mean(dist), step)
