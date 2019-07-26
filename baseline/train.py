@@ -35,7 +35,7 @@ def train(agent, env, evaluate, writer):
     observation = None
     noise_factor = args.noise_factor
     pbar = tqdm(total = train_times+1)
-    limit_act = True; print(f"limit actions: {limit_act}")
+    limit_act = args.limit_act; print(f"limit actions: {limit_act}")
     while step <= train_times:
         # print(f"step: {step}")
         step += 1
@@ -123,6 +123,7 @@ if __name__ == "__main__":
     parser.add_argument('--resume', default=None, type=str, help='Resuming model path for testing')
     parser.add_argument('--output', default='./model', type=str, help='Resuming model path for testing')
     parser.add_argument('--debug', dest='debug', action='store_true', help='print some info')
+    parser.add_argument('--limit_act', default=False, dest='limit_act', action='store_true', help='limit action space')
     parser.add_argument('--seed', default=1234, type=int, help='random seed')
     parser.add_argument('--identifier', default='test', type=str, help='experiment identifier')
     parser.add_argument('--data', default='./data/dump_cubi_test/', type=str, help='dataset path')
