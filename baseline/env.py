@@ -9,6 +9,8 @@ from DRL.ddpg import decode
 from utils.util import *
 from PIL import Image
 from torchvision import transforms, utils
+from pathlib import Path
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 aug = transforms.Compose(
@@ -32,16 +34,33 @@ class Paint:
         self.observation_space = (self.batch_size, width, width, 7)
         self.test = False
         
-    def load_data(self):
+    def load_data(self, path='mnist'):
         # CelebA
-        path = './data/dump_cubi_test/'
-        num_img = 100
-        img_type = '.png'
+        # path = './data/dump_cubi_test/'
+        # num_img = 100
+        # num_img = 10
+        # img_type = '.png'
+        mnist = False
+        if path == 'mnist':
+            mnist = True
+            import torchvision.datasets as dset
+            import torchvision.transforms as transforms
+            root = './data'
+            trans = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (1.0,))])
+            image_paths = dset.MNIST(root=root, train=True, transform=trans, download=True)
+        else:
+            image_paths = list(Path(path).iterdir())
         global train_num, test_num
-        for i in range(num_img):
-            img_id = '%06d' % (i + 1)
+        # for i in range(num_img):
+        num_img = len(image_paths)
+        for i in range(len(image_paths)):
+                # img_id = '%06d' % (i + 1)
             try:
-                img = cv2.imread(path + img_id + img_type, cv2.IMREAD_UNCHANGED)
+                im = image_paths[i]
+                if mnist:
+                    img = im[0].squeeze().numpy()
+                else:
+                    img = cv2.imread(str(im), cv2.IMREAD_UNCHANGED)
                 if img.ndim == 2:
                     img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
                 img = cv2.resize(img, (width, width))
@@ -51,6 +70,9 @@ class Paint:
                 else:
                     test_num += 1
                     img_test.append(img)
+            except:
+                print(f"wrong image file: {im}")
+                pass
             finally:
                 if (i + 1) % 10000 == 0:                    
                     print('loaded {} images'.format(i + 1))
