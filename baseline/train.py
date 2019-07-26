@@ -70,7 +70,7 @@ def train(agent, env, evaluate, writer):
             if step > args.warmup:
                 # [optional] evaluate
                 if episode > 0 and validate_interval > 0 and episode % validate_interval == 0:
-                    reward, dist = evaluate(env, agent.select_action, debug=debug)
+                    reward, dist = evaluate(env, agent.select_action, step=step, debug=debug)
                     if debug: prRed('Step_{:07d}: mean_reward:{:.3f} mean_dist:{:.3f} var_dist:{:.3f}'.format(step - 1, np.mean(reward), np.mean(dist), np.var(dist)))
                     writer.add_scalar('validate/mean_reward', np.mean(reward), step)
                     writer.add_scalar('validate/mean_dist', np.mean(dist), step)
@@ -88,7 +88,7 @@ def train(agent, env, evaluate, writer):
                 else:
                     lr = (3e-5, 1e-4)
                 for i in range(episode_train_times):
-                    Q, value_loss = agent.update_policy(lr)
+                    Q, value_loss = agent.update_policy(lr) # update gan
                     tot_Q += Q.data.cpu().numpy()
                     tot_value_loss += value_loss.data.cpu().numpy()
                 writer.add_scalar('train/critic_lr', lr[0], step)
