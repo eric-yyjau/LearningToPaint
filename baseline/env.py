@@ -59,6 +59,7 @@ class Paint:
                 im = image_paths[i]
                 if mnist:
                     img = im[0].squeeze().numpy()
+                    img = ((img + 0.5)*255).astype(np.uint8)
                 else:
                     img = cv2.imread(str(im), cv2.IMREAD_UNCHANGED)
                 if img.ndim == 2:
