@@ -34,20 +34,21 @@ class Paint:
         self.observation_space = (self.batch_size, width, width, 7)
         self.test = False
         
-    def load_data(self, path='mnist'):
+    def load_data(self, path='MNIST'):
         # CelebA
         # path = './data/dump_cubi_test/'
         # num_img = 100
         # num_img = 10
         # img_type = '.png'
         mnist = False
-        if path == 'mnist':
+        if path == 'MNIST' or path == 'Omniglot':
             mnist = True
             import torchvision.datasets as dset
             import torchvision.transforms as transforms
             root = './data'
             trans = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (1.0,))])
-            image_paths = dset.MNIST(root=root, train=True, transform=trans, download=True)
+            dataset = getattr(dset, path)
+            image_paths = dataset(root=root, transform=trans, download=True)
         else:
             image_paths = list(Path(path).iterdir())
         global train_num, test_num
