@@ -120,7 +120,7 @@ if __name__ == "__main__":
     parser.add_argument('--limit_act', default=False, dest='limit_act', action='store_true', help='limit action space')
     parser.add_argument('--seed', default=1234, type=int, help='random seed')
     parser.add_argument('--identifier', default='test', type=str, help='experiment identifier')
-    parser.add_argument('--data', default='./data/dump_cubi_test/', type=str, help='dataset path')
+    parser.add_argument('--data', default='./data/dump_cubi_test/', type=str, help='dataset path: inbuilt "MINST", "Omniglot"')
 
     args = parser.parse_args()    
     args.output = get_output_folder(args.output, args.identifier)
