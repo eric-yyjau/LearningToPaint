@@ -36,6 +36,13 @@ def train(agent, env, evaluate, writer):
     noise_factor = args.noise_factor
     pbar = tqdm(total = train_times+1)
     limit_act = args.limit_act; print(f"limit actions: {limit_act}")
+    action_space = {}
+    action_space['no_rbg'] = True
+    action_space['no_curve'] = True
+    action_space['no_transpar'] = True
+    action_space['same_thick'] = False
+    print(f"action_space: {action_space}")
+
     while step <= train_times:
         # print(f"step: {step}")
         step += 1
@@ -46,23 +53,10 @@ def train(agent, env, evaluate, writer):
             observation = env.reset()
             agent.reset(observation, noise_factor)    
         action = agent.select_action(observation, noise_factor=noise_factor)
-        def limit_actions(action, no_rbg=False, no_curve=False, no_transpar=False, same_thick=False):
-            x = action.reshape(-1, 10 + 3)
-            if no_rbg:
-                x[:,-3:] = 1
-            if no_curve:
-                x[:,2:4] = 0
-            if no_transpar:
-                x[:,7] = 1
-                x[:,9] = 1
-            if same_thick:
-                x[:,6] = x[:,8]
 
-            x = x.reshape(-1, (10 + 3)*5)
-            return x
-            pass
         if limit_act: 
-            action = limit_actions(action, no_rbg=True, no_curve=True, no_transpar=True, same_thick=True)
+            action = limit_actions(action, no_rbg=action_space['no_rbg'], no_curve=action_space['no_curve'], 
+                          no_transpar=action_space['no_transpar'], same_thick=action_space['same_thick'])
 
         observation, reward, done, _ = env.step(action)
         agent.observe(reward, observation, done, step)
@@ -148,6 +142,6 @@ if __name__ == "__main__":
     agent = DDPG(args.batch_size, args.env_batch, args.max_step, \
                  args.tau, args.discount, args.rmsize, \
                  writer, args.resume, args.output)
-    evaluate = Evaluator(args, writer)
+    evaluate = Evaluator(args, writer, args.limit_act)
     print('observation_space', fenv.observation_space, 'action_space', fenv.action_space)
     train(agent, fenv, evaluate, writer)

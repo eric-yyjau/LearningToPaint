@@ -26,6 +26,7 @@ class fastenv():
             if self.env.imgid[i] <= 10:
                 # print(f"self.env.canvas[i].: {self.env.canvas[i].shape}")
                 canvas = cv2.cvtColor((to_numpy(self.env.canvas[i].permute(1, 2, 0))), cv2.COLOR_BGR2RGB)
+                cv2.imwrite(f'{self.env.imgid[i]}/tr_step{train_step}/canvas_{step}.png', canvas)
                 # print(f"canvas: {canvas.shape}")
                 # self.writer.add_image('{}/canvas_{}.png'.format(str(self.env.imgid[i]), str(step)), trans2(canvas), log)
                 self.writer.add_image(f'{self.env.imgid[i]}/tr_step{train_step}/canvas_{step}.png', trans2(canvas), log)

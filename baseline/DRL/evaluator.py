@@ -3,12 +3,13 @@ from utils.util import *
 
 class Evaluator(object):
 
-    def __init__(self, args, writer):    
+    def __init__(self, args, writer, limit_act=False):    
         self.validate_episodes = args.validate_episodes
         self.max_step = args.max_step
         self.env_batch = args.env_batch
         self.writer = writer
         self.log = 0
+        self.limit_act = limit_act
 
     def __call__(self, env, policy, train_step=0, debug=False):
         observation = None
@@ -22,6 +23,8 @@ class Evaluator(object):
             episode_reward = np.zeros(self.env_batch)
             while (episode_steps < self.max_step or not self.max_step):
                 action = policy(observation)
+                if self.limit_act: 
+                    action = limit_actions(action, no_rbg=True, no_curve=True, no_transpar=True, same_thick=True)
                 observation, reward, done, (step_num) = env.step(action)
                 episode_reward += reward
                 episode_steps += 1

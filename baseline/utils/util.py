@@ -67,3 +67,22 @@ def get_output_folder(parent_dir, env_name):
     parent_dir = parent_dir + '-run{}'.format(experiment_id)
     os.makedirs(parent_dir, exist_ok=True)
     return parent_dir
+
+# from utils.util import limit_actions
+def limit_actions(action, no_rbg=False, no_curve=False, no_transpar=False, same_thick=False):
+    x = action.reshape(-1, 10 + 3)
+    if no_rbg:
+        x[:,-3:] = 1
+    if no_curve:
+        x[:,2:4] = 0
+    if no_transpar:
+        x[:,8] = 1
+        x[:,9] = 1
+    if same_thick:
+        temp = (x[:,6] + x[:,7])/2
+        x[:,6] = temp
+        x[:,7] = temp
+
+    x = x.reshape(-1, (10 + 3)*5)
+    return x
+    pass

@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from DRL.actor import *
 from Renderer.stroke_gen import *
 from Renderer.model import *
+from utils.util import limit_actions
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 width = 128
@@ -20,6 +21,8 @@ parser.add_argument('--renderer', default='./renderer.pkl', type=str, help='rend
 parser.add_argument('--img', default='image/test.png', type=str, help='test image')
 parser.add_argument('--imgid', default=0, type=int, help='set begin number for generated image')
 parser.add_argument('--divide', default=4, type=int, help='divide the target image to get better resolution')
+parser.add_argument('--limit_act', default=False, dest='limit_act', action='store_true', help='limit action space')
+
 args = parser.parse_args()
 
 canvas_cnt = args.divide * args.divide
@@ -116,7 +119,13 @@ img = img.reshape(1, width, width, 3)
 img = np.transpose(img, (0, 3, 1, 2))
 img = torch.tensor(img).to(device).float() / 255.
 
-os.system('mkdir output')
+try:
+    print("mkdir")
+    # os.system('mkdir output')
+    os.mkdir('output', exist_ok=False)
+except:
+    print("mkdir: cannot create directory")
+    pass
 
 with torch.no_grad():
     if args.divide != 1:
@@ -124,6 +133,10 @@ with torch.no_grad():
     for i in range(args.max_step):
         stepnum = T * i / args.max_step
         actions = actor(torch.cat([canvas, img, stepnum, coord], 1))
+        if args.limit_act: 
+            print(f"limit_act: {args.limit_act}, actions: {actions}")
+            actions = limit_actions(actions, no_rbg=True, no_curve=True, no_transpar=True, same_thick=True)
+            print(f"limit_act: {args.limit_act}, actions: {actions}")
         canvas, res = decode(actions, canvas)
         print('canvas step {}, L2Loss = {}'.format(i, ((canvas - img) ** 2).mean()))
         for j in range(5):
