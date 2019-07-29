@@ -41,7 +41,10 @@ class Paint:
         # num_img = 10
         # img_type = '.png'
         mnist = False
+        flip_img = False
         if path == 'MNIST' or path == 'Omniglot':
+            if path == 'Omniglot':
+                flip_img = True
             mnist = True
             import torchvision.datasets as dset
             import torchvision.transforms as transforms
@@ -51,6 +54,8 @@ class Paint:
             image_paths = dataset(root=root, transform=trans, download=True)
         else:
             image_paths = list(Path(path).iterdir())
+        print(f"dataset: {path}, mnist: {mnist}, flip_img: {flip_img}")
+
         global train_num, test_num
         # for i in range(num_img):
         num_img = len(image_paths)
@@ -60,6 +65,8 @@ class Paint:
                 im = image_paths[i]
                 if mnist:
                     img = im[0].squeeze().numpy()
+                    if flip_img: 
+                        img = 0.5 - img
                     img = ((img + 0.5)*255).astype(np.uint8)
                 else:
                     img = cv2.imread(str(im), cv2.IMREAD_UNCHANGED)
