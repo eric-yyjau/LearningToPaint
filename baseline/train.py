@@ -14,6 +14,7 @@ from tensorboardX import SummaryWriter
 ## for training on server
 import sys
 sys.path.append('/efs_mint/Documents/LearningToPaint')
+sys.path.append('/home/yyjau/Documents/LearningToPaint')
 # exp = os.path.abspath('.').split('/')[-1]
 # writer = TensorBoard('../train_log/{}'.format(exp))
 
