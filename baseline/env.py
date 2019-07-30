@@ -66,7 +66,7 @@ class Paint:
                 if mnist:
                     img = im[0].squeeze().numpy()
                     if flip_img: 
-                        img = 0.5 - img
+                        img = -1 * img
                     img = ((img + 0.5)*255).astype(np.uint8)
                 else:
                     img = cv2.imread(str(im), cv2.IMREAD_UNCHANGED)
